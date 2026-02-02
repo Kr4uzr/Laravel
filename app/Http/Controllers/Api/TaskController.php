@@ -15,7 +15,7 @@ class TaskController extends Controller
 {
     /**
      * Lista todas as tarefas.
-     * Retorna uma coleção de tarefas com paginação opcional.
+     * Retorna 200 OK com uma coleção de tarefas.
      *
      * @return AnonymousResourceCollection
      */
@@ -28,16 +28,23 @@ class TaskController extends Controller
 
     /**
      * Cria uma nova tarefa.
-     * Código legado mantido para refatoração na Parte 2 da avaliação.
+     * Retorna 201 Created com a tarefa criada.
+     * Retorna 422 se houver erro de validação.
+     *
+     * @param StoreTaskRequest $request
+     * @return TaskResource
      */
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request): TaskResource
     {
-        $task = new Task();
-        $task->title = $request->title;
-        $task->description = $request->description;
-        $task->completed = false;
-        $task->save();
-        return response()->json($task);
+        $validated = $request->validated();
+
+        $task = Task::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'completed' => false,
+        ]);
+
+        return (new TaskResource($task))->response()->setStatusCode(201);
     }
 
     /**
@@ -58,6 +65,7 @@ class TaskController extends Controller
      * Atualiza uma tarefa existente.
      * Retorna 404 se a tarefa não for encontrada.
      * Retorna 422 se houver erro de validação.
+     * Retorna 200 OK com a tarefa atualizada.
      *
      * @param UpdateTaskRequest $request
      * @param string $id
@@ -74,6 +82,7 @@ class TaskController extends Controller
     /**
      * Remove uma tarefa.
      * Retorna 404 se a tarefa não for encontrada.
+     * Retorna 200 OK com a mensagem de sucesso.
      *
      * @param string $id
      * @return JsonResponse
