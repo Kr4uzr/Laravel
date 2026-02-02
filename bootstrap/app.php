@@ -15,5 +15,22 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Tratamento específico para ModelNotFoundException em rotas da API
+        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Recurso não encontrado.'
+                ], 404);
+            }
+        });
+
+        // Tratamento de erros gerais para rotas da API
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Erro interno do servidor.',
+                    'error' => config('app.debug') ? $e->getMessage() : null
+                ], 500);
+            }
+        });
     })->create();
