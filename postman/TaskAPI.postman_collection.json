@@ -1,0 +1,484 @@
+{
+	"info": {
+		"_postman_id": "task-api-collection",
+		"name": "Task API",
+		"description": "Collection completa da API REST para gerenciamento de tarefas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Listar todas as tarefas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/tasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"tasks"
+							]
+						},
+						"description": "Retorna uma lista de todas as tarefas ordenadas por data de criação (mais recente primeiro).\n\n**Códigos de resposta:**\n- 200 OK: Lista de tarefas retornada com sucesso\n- 500 Internal Server Error: Erro ao consultar o banco de dados"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Lista de tarefas",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/tasks",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"title\": \"Tarefa 1\",\n        \"description\": \"Descrição da tarefa 1\",\n        \"completed\": false,\n        \"created_at\": \"2024-01-15 10:30:00\",\n        \"updated_at\": \"2024-01-15 10:30:00\"\n    },\n    {\n        \"id\": 2,\n        \"title\": \"Tarefa 2\",\n        \"description\": \"Descrição da tarefa 2\",\n        \"completed\": true,\n        \"created_at\": \"2024-01-14 09:20:00\",\n        \"updated_at\": \"2024-01-14 15:45:00\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Criar nova tarefa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Nova tarefa\",\n    \"description\": \"Descrição da nova tarefa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/tasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"tasks"
+							]
+						},
+						"description": "Cria uma nova tarefa. O campo `completed` sempre será `false` por padrão.\n\n**Campos obrigatórios:**\n- `title` (string, máximo 255 caracteres)\n\n**Campos opcionais:**\n- `description` (string)\n\n**Códigos de resposta:**\n- 201 Created: Tarefa criada com sucesso\n- 422 Unprocessable Entity: Erro de validação\n- 500 Internal Server Error: Erro ao salvar no banco de dados"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Tarefa criada",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Nova tarefa\",\n    \"description\": \"Descrição da nova tarefa\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/tasks",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Nova tarefa\",\n    \"description\": \"Descrição da nova tarefa\",\n    \"completed\": false,\n    \"created_at\": \"2024-01-15 10:30:00\",\n    \"updated_at\": \"2024-01-15 10:30:00\"\n}"
+						},
+						{
+							"name": "Erro - Validação (422)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/tasks",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"O campo título é obrigatório.\",\n    \"errors\": {\n        \"title\": [\n            \"O campo título é obrigatório.\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Buscar tarefa por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/tasks/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da tarefa"
+								}
+							]
+						},
+						"description": "Retorna uma tarefa específica pelo ID.\n\n**Códigos de resposta:**\n- 200 OK: Tarefa encontrada\n- 404 Not Found: Tarefa não encontrada\n- 500 Internal Server Error: Erro ao consultar o banco de dados"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Tarefa encontrada",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/tasks/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Tarefa exemplo\",\n    \"description\": \"Descrição da tarefa\",\n    \"completed\": false,\n    \"created_at\": \"2024-01-15 10:30:00\",\n    \"updated_at\": \"2024-01-15 10:30:00\"\n}"
+						},
+						{
+							"name": "Erro - Não encontrada (404)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/tasks/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Recurso não encontrado.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Atualizar tarefa",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Tarefa atualizada\",\n    \"description\": \"Nova descrição\",\n    \"completed\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/tasks/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da tarefa"
+								}
+							]
+						},
+						"description": "Atualiza uma tarefa existente. Todos os campos são opcionais (partial update).\n\n**Campos opcionais:**\n- `title` (string, máximo 255 caracteres)\n- `description` (string)\n- `completed` (boolean)\n\n**Códigos de resposta:**\n- 200 OK: Tarefa atualizada com sucesso\n- 404 Not Found: Tarefa não encontrada\n- 422 Unprocessable Entity: Erro de validação\n- 500 Internal Server Error: Erro ao atualizar no banco de dados"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Tarefa atualizada",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Tarefa atualizada\",\n    \"description\": \"Nova descrição\",\n    \"completed\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/tasks/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Tarefa atualizada\",\n    \"description\": \"Nova descrição\",\n    \"completed\": true,\n    \"created_at\": \"2024-01-15 10:30:00\",\n    \"updated_at\": \"2024-01-15 15:45:00\"\n}"
+						},
+						{
+							"name": "Erro - Não encontrada (404)",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Tarefa atualizada\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/tasks/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Recurso não encontrado.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Remover tarefa",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/tasks/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da tarefa"
+								}
+							]
+						},
+						"description": "Remove uma tarefa do sistema.\n\n**Códigos de resposta:**\n- 204 No Content: Tarefa removida com sucesso (sem corpo na resposta)\n- 404 Not Found: Tarefa não encontrada\n- 500 Internal Server Error: Erro ao remover do banco de dados"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Tarefa removida (204)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/tasks/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"1"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Erro - Não encontrada (404)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/tasks/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Recurso não encontrado.\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints para gerenciamento de tarefas"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
