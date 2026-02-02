@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: task-api-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - /var/www/html/vendor
+    networks:
+      - task-api-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - PHP_IDE_CONFIG=serverName=task-api
+
+  nginx:
+    image: nginx:alpine
+    container_name: task-api-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - task-api-network
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: task-api-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-task_api}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password123}
+      MYSQL_USER: ${DB_USERNAME:-task_user}
+      TZ: America/Sao_Paulo
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - task-api-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: task-api-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    networks:
+      - task-api-network
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  task-api-network:
+    driver: bridge
