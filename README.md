@@ -203,8 +203,6 @@ Resposta (204 No Content - sem corpo)
 
 Importe a collection disponível em `postman/TaskAPI.postman_collection.json` no Postman.
 
-```
-
 ## Estrutura do Projeto
 
 ```
