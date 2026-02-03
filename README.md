@@ -1,59 +1,255 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST para gerenciamento de tarefas desenvolvida em Laravel 12.
 
-## About Laravel
+## Tecnologias
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3
+- Laravel 12
+- MySQL 8.0
+- Docker e Docker Compose
+- PHPUnit (testes)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Docker
+- Docker Compose
+- Git
 
-## Learning Laravel
+## Instalação
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Clone o repositório e entre na pasta do projeto:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/Kr4uzr/Laravel.git
+cd Laravel
+```
 
-## Laravel Sponsors
+Copie o arquivo `.env.example` para `.env`:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+cp .env.example .env
+```
 
-### Premium Partners
+Configure as variáveis de ambiente do banco de dados no `.env` se necessário. As configurações padrão já estão prontas para uso com Docker, mas caso queira:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=task_api
+DB_USERNAME=task_user
+DB_PASSWORD=password123
+```
 
-## Contributing
+## Como rodar
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Suba os containers:
 
-## Code of Conduct
+```bash
+docker-compose up -d
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Execute as migrations:
 
-## Security Vulnerabilities
+```bash
+docker-compose exec app php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+A API estará disponível em `http://localhost:8000`.
 
-## License
+## Testes
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Para executar os testes unitários:
+
+```bash
+docker-compose exec app php artisan test
+```
+
+## Estrutura da API
+
+### Base URL
+
+```
+http://localhost:8000/api
+```
+
+### Endpoints
+
+#### Listar todas as tarefas
+
+```
+GET /api/tasks
+```
+
+Resposta (200 OK):
+```json
+[
+    {
+        "id": 1,
+        "title": "Tarefa exemplo",
+        "description": "Descrição da tarefa",
+        "completed": false,
+        "created_at": "2024-01-15 10:30:00",
+        "updated_at": "2024-01-15 10:30:00"
+    }
+]
+```
+
+#### Criar nova tarefa
+
+```
+POST /api/tasks
+```
+
+Body:
+```json
+{
+    "title": "Nova tarefa",
+    "description": "Descrição opcional"
+}
+```
+
+Resposta (201 Created):
+```json
+{
+    "id": 1,
+    "title": "Nova tarefa",
+    "description": "Descrição opcional",
+    "completed": false,
+    "created_at": "2026-01-30 10:30:00",
+    "updated_at": "2026-01-30 10:30:00"
+}
+```
+
+#### Buscar tarefa por ID
+
+```
+GET /api/tasks/{id}
+```
+
+Resposta (200 OK):
+```json
+{
+    "id": 1,
+    "title": "Tarefa exemplo",
+    "description": "Descrição da tarefa",
+    "completed": false,
+    "created_at": "2026-01-30 10:30:00",
+    "updated_at": "2026-01-30 10:30:00"
+}
+```
+
+#### Atualizar tarefa
+
+```
+PUT /api/tasks/{id}
+```
+
+Body (todos os campos são opcionais):
+```json
+{
+    "title": "Tarefa atualizada",
+    "description": "Nova descrição",
+    "completed": true
+}
+```
+
+Resposta (200 OK):
+```json
+{
+    "id": 1,
+    "title": "Tarefa atualizada",
+    "description": "Nova descrição",
+    "completed": true,
+    "created_at": "2026-01-30 10:30:00",
+    "updated_at": "2026-01-30 15:45:00"
+}
+```
+
+#### Remover tarefa
+
+```
+DELETE /api/tasks/{id}
+```
+
+Resposta (204 No Content - sem corpo)
+
+## Códigos HTTP
+
+- 200 OK - Requisição bem-sucedida
+- 201 Created - Recurso criado com sucesso
+- 204 No Content - Recurso removido com sucesso
+- 404 Not Found - Recurso não encontrado
+- 422 Unprocessable Entity - Erro de validação
+- 500 Internal Server Error - Erro interno do servidor
+
+## Validação
+
+### Criar tarefa (POST)
+
+- `title` (obrigatório, string, máximo 255 caracteres)
+- `description` (opcional, string)
+
+### Atualizar tarefa (PUT)
+
+- `title` (opcional, string, máximo 255 caracteres)
+- `description` (opcional, string)
+- `completed` (opcional, boolean)
+
+## Testando a API
+
+### Postman
+
+Importe a collection disponível em `postman/TaskAPI.postman_collection.json` no Postman.
+
+```
+
+## Estrutura do Projeto
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── Api/
+│   │       └── TaskController.php
+│   ├── Requests/
+│   │   ├── StoreTaskRequest.php
+│   │   └── UpdateTaskRequest.php
+│   └── Resources/
+│       └── TaskResource.php
+├── Models/
+│   └── Task.php
+└── Services/
+    └── TaskService.php
+
+database/
+├── factories/
+│   └── TaskFactory.php
+└── migrations/
+    └── YYYY_MM_DD_create_tasks_table.php
+
+routes/
+└── api.php
+
+tests/
+└── Unit/
+    └── TaskServiceTest.php
+
+postman/
+└── TaskAPI.postman_collection.json
+```
+
+## Banco de Dados
+
+O MySQL está configurado no Docker Compose. Credenciais padrão:
+
+- User: task_user
+- Password: password123
+
+Para acessar via phpMyAdmin: `http://localhost:8080`
+
+## Observações
+
+- A API possui rate limiting de 50 requisições por minuto
+- O campo `completed` sempre inicia como `false` ao criar uma tarefa
