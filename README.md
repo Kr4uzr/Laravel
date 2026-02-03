@@ -60,6 +60,12 @@ A API estará disponível em `http://localhost:8000`.
 
 ## Testes
 
+Antes de executar os testes, é necessário criar o banco de dados de teste:
+
+```bash
+docker-compose exec mysql mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS task_api_test;"
+```
+
 Para executar os testes unitários:
 
 ```bash
