@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Services\TaskService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TaskController extends Controller
@@ -43,7 +44,7 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request): TaskResource
     {
         $task = $this->taskService->createTask($request->validated());
-        return (new TaskResource($task))->response()->setStatusCode(201);
+        return new TaskResource($task);
     }
 
     /**

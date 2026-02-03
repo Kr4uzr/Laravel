@@ -25,4 +25,20 @@ class TaskResource extends JsonResource
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
     }
+
+    /**
+     * Define o status code da resposta quando o Resource é usado para criação.
+     *
+     * @param Request $request
+     * @param \Illuminate\Http\JsonResponse $response
+     * @return void
+     */
+    public function withResponse(Request $request, $response): void
+    {
+        // Se for uma requisição POST (criação), define status 201
+        if ($request->isMethod('POST')) {
+            $response->setStatusCode(201);
+        }
+    }
+
 }

@@ -15,22 +15,28 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Tratamento específico para ModelNotFoundException em rotas da API
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, \Illuminate\Http\Request $request) {
-            if ($request->is('api/*')) {
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            // Aplica apenas para rotas da API
+            if (!$request->is('api/*')) {
+                return null;
+            }
+
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
                 return response()->json([
                     'message' => 'Recurso não encontrado.'
                 ], 404);
             }
-        });
 
-        // Tratamento de erros gerais para rotas da API
-        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
-            if ($request->is('api/*')) {
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
                 return response()->json([
-                    'message' => 'Erro interno do servidor.',
-                    'error' => config('app.debug') ? $e->getMessage() : null
-                ], 500);
+                    'message' => 'Os dados fornecidos são inválidos.',
+                    'errors' => $e->errors()
+                ], 422);
             }
+
+            return response()->json([
+                'message' => 'Erro interno do servidor.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         });
     })->create();
